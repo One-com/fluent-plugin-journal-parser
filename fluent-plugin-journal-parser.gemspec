@@ -1,6 +1,6 @@
 Gem::Specification.new do |spec|
   spec.name          = 'fluent-plugin-journal-parser'
-  spec.version       = '0.1.0'
+  spec.version       = '0.1.1'
   spec.authors       = ['Emil Renner Berthing']
   spec.email         = ['erb@one.com']
   spec.licenses      = ['Apache-2.0']

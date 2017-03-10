@@ -29,15 +29,18 @@ begin # fluentd >= 0.14
             record = {}
             while (m = text.index(/[=\n]/, n)) != n
               raise ParserError if m.nil?
-              key = text.slice(n, m-n)
+              key = text.slice(n, m-n).force_encoding(Encoding::UTF_8)
+              raise ParserError unless key.valid_encoding?
               n = m+1 # continue parsing after newline/equal sign
               if text[m] == '=' # simple field
                 m = text.index("\n", n)
-                value = text.slice(n, m-n)
+                value = text.slice(n, m-n).force_encoding(Encoding::UTF_8)
+                raise ParserError unless value.valid_encoding?
               else # text[m] == "\n" # binary safe field
                 m = text.slice(n, 8).unpack('Q<')[0]
                 n += 8
-                value = text.slice(n, m)
+                value = text.slice(n, m).force_encoding(Encoding::UTF_8)
+                value.force_encoding(Encoding::ASCII_8BIT) unless value.valid_encoding?
                 m = n+m
               end
               record[key] = value
@@ -73,15 +76,18 @@ rescue LoadError # fluentd < 0.14
           record = {}
           while (m = text.index(/[=\n]/, n)) != n
             raise ParserError if m.nil?
-            key = text.slice(n, m-n)
+            key = text.slice(n, m-n).force_encoding(Encoding::UTF_8)
+            raise ParserError unless key.valid_encoding?
             n = m+1 # continue parsing after newline/equal sign
             if text[m] == '=' # simple field
               m = text.index("\n", n)
-              value = text.slice(n, m-n)
+              value = text.slice(n, m-n).force_encoding(Encoding::UTF_8)
+              raise ParserError unless value.valid_encoding?
             else # text[m] == "\n" # binary safe field
               m = text.slice(n, 8).unpack('Q<')[0]
               n += 8
-              value = text.slice(n, m)
+              value = text.slice(n, m).force_encoding(Encoding::UTF_8)
+              value.force_encoding(Encoding::ASCII_8BIT) unless value.valid_encoding?
               m = n+m
             end
             record[key] = value
